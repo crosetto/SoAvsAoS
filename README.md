@@ -61,7 +61,7 @@ struct Item : public std::tuple<T ...>{
 ```
 
 Next we create two helper classes which given an item generate the container type as a vector of tuples or a tuple of vectors, depending on a tag template argument. We call this class a DataLayoutPolicy and we are going to use it e.g. in this way:
-[sourcecode]DataLayoutPolicy<std::vector, SoA, char, double, std::string>```
+```DataLayoutPolicy<std::vector, SoA, char, double, std::string>```
 to generate a tuple of vectors of char, int and double.
 
 ```C++
@@ -92,8 +92,8 @@ struct DataLayoutPolicy<Container, DataLayout::AoS, TItem<Types...>> {
 ```
 ... just forwarding. We do the same for the structure of arrays case. Note: there are a few things to be explained about the code below.
 
-* It wraps all the types in a [sourcecode]ref_wrap``` type, which is a "decorated" std::reference_wrapper. This is because we want to access the elements as lvalue references,
-  to be able to change their values. using a regular reference we would be in trouble if e.g. [sourcecode]Types``` contains any reference.
+* It wraps all the types in a ```ref_wrap``` type, which is a "decorated" std::reference_wrapper. This is because we want to access the elements as lvalue references,
+  to be able to change their values. using a regular reference we would be in trouble if e.g. ```Types``` contains any reference.
   One thing worth noticing is that in the AoS case the DataLayoutPolicy::value_type is a reference, while in the SoA case is the value of a ref_wrap type.
 
 * we return by value a newly created tuple of ref_wrap of the values. This is surpisingly OK, because the compiler is optimizing all
@@ -212,10 +212,10 @@ struct BaseContainer
 
 ```
 
-We call the helper functions defined for the SoA and AoS policies. We know by C++17 guaranteed copy elision that the [sourcecode]operator[]``` does not instantiate anything -- not yet.
+We call the helper functions defined for the SoA and AoS policies. We know by C++17 guaranteed copy elision that the ```operator[]``` does not instantiate anything -- not yet.
 
 Now this is no standard container, so we have to define an iterator in order to use it whithin STL algorithms. The iterator we build looks like a STL iterator for a container of tuple,
-except for the fact that it must hold a reference to the container, because when we call the dereference operator we want to call our storage's [sourcecode]operator[]```, which statically dispatches the operation
+except for the fact that it must hold a reference to the container, because when we call the dereference operator we want to call our storage's ```operator[]```, which statically dispatches the operation
 using the container's data layout policy.
 
 ```C++
@@ -280,7 +280,7 @@ and I'll expand later about that.
 
 so eventually we can write the program:
 
-[sourcecode language=cpp]
+```C++
 template<typename T>
 using MyVector = std::vector<T, std::allocator<T>>;
 
@@ -295,12 +295,12 @@ std::cout<<"container size " << container_.size()<< " \n";
 and we can write generic and efficient code regardless of the memory layout underneeth.
 What's left to do is to check that this is a zero cost abstraction. The easiest way for me to check that is using a debugger:
 compile the example with symbols on,
-[sourcecode]
+```
 > clang++ -std=c++1z -O3 -g main.cpp -o test
 ```
-run it with gdb, set a brakpoint in the for loop, and step through the assembly instructions (the [sourcecode]layout split``` command shows the
+run it with gdb, set a brakpoint in the for loop, and step through the assembly instructions (the ```layout split``` command shows the
 source code and disassembled instructions at the same time)
-[sourcecode]
+```
 > gdb test
 (gdb) break main.cpp : 10 # set breakpoint inside the loop
 (gdb) run # execute until the breakpoint
@@ -308,7 +308,7 @@ source code and disassembled instructions at the same time)
 (gdb) stepi # execute one instruction
 ```
 The instructions being executed inside the loop are in case of AoS data layout
-[sourcecode]
+```
 0x400b00 <main(int, char**)+192>        movsd  %xmm0,(%rsi)
 0x400b04 <main(int, char**)+196>        add    $0x610,%rsi
 0x400b0b <main(int, char**)+203>        add    $0xffffffffffffffff,%rcx
@@ -316,7 +316,7 @@ The instructions being executed inside the loop are in case of AoS data layout
 ```
 Notice in particular that in the second line the offset being add to compute the address is 0x160. This changes depending on the
 size of the data members in the item object. On the other hand for the SoA data structure we have
-[sourcecode]
+```
 0x400b60 <main(int, char**)+224>        movups %xmm1,(%rdi,%rsi,8)
 0x400b64 <main(int, char**)+228>        movups %xmm1,0x10(%rdi,%rsi,8)
 0x400b69 <main(int, char**)+233>        movups %xmm1,0x20(%rdi,%rsi,8)
