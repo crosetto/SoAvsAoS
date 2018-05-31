@@ -36,31 +36,7 @@ And we want to do that without paying any const, i.e. building a zero cost abstr
 This problem is not trivial, and has given headaches to programmers in the last years, forcing them to choosea tradeoff between performance and code readability. Well this time is over, thanks to the magic of modern C++.
 Let me explain the details by showing how to build the abstraction from scratch.
 
-We start by defining our "item" data structure: we make it a decorator of a std::tuple, with some specific member functions (in this case only getters/setters).
-We give readable names to the 0, 1, 2, 3 integer indices, they represent the data members of our item.
-
-```C++
-enum Component : int {
-	eMyDouble,
-	eMyChar,
-	eMyString,
-	eMyPadding
-};
-
-struct Pad{
-char mPad[1500];
-};
-
-template<typename ... T>
-struct Item : public std::tuple<T ...>{
-	using std::tuple<T...>::tuple;
- 	auto & myDouble(){return std::get<eMyDouble>(*this);}
- 	auto & myChar()  {return std::get<eMyChar>(*this);}
- 	auto & myString(){return std::get<eMyString>(*this);}
-};
-```
-
-Next we create two helper classes which given an item generate the container type as a vector of tuples or a tuple of vectors, depending on a tag template argument. We call this class a DataLayoutPolicy and we are going to use it e.g. in this way:
+We create two helper classes which given an item generate the container type as a vector of tuples or a tuple of vectors, depending on a tag template argument. We call this class a DataLayoutPolicy and we are going to use it e.g. in this way:
 ```DataLayoutPolicy<std::vector, SoA, char, double, std::string>```
 to generate a tuple of vectors of char, int and double.
 
@@ -270,13 +246,34 @@ public:
 };
 ```
 
+Eventually we define our "item" data structure: we make it a decorator of a std::tuple, with some specific member functions (in this case only getters/setters).
+We give readable names to the 0, 1, 2, 3 integer indices, they represent the data members of our item.
+
+```C++
+enum Component : int {
+	eMyDouble,
+	eMyChar,
+	eMyString,
+	eMyPadding
+};
+
+struct Pad{
+char mPad[1500];
+};
+
+template<typename ... T>
+struct Item : public std::tuple<T ...>{
+	using std::tuple<T...>::tuple;
+ 	auto & myDouble(){return std::get<eMyDouble>(*this);}
+ 	auto & myChar()  {return std::get<eMyChar>(*this);}
+ 	auto & myString(){return std::get<eMyString>(*this);}
+};
+```
+
 When we call Item's member functions we have to rely on compiler optimization in order for our abstraction to be "zero-cost":
 C++17 guaranteed copy elision assures us that no copies of Item has been called so far, but we don't want to call the
-constructor either, because we are creating a temporary tuple just to access one of it's member each time and we would thrash it right
-away. While we can mark the copy/move constructors as deleted, the constructor semantically needs to be present, even if the
-compiler can remove it in the optimization phase, provided it doesn't have side effects.
-Nothing assures us that the call to the constructor gets optimized though. It just happens to be the case, compilers do a good job,
-and I'll expand later about that.
+constructor either, because we are creating a temporary tuple just to access one of it's member each time and we would thrash it right away. It just happens that compilers do a good job,
+and we'll see later that all the accesses get optimized.
 
 so eventually we can write the program:
 
