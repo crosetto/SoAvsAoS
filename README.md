@@ -1,3 +1,5 @@
+# C++ zero cost abstraction to switch from AoS to SoA
+
 Did you ever struggle because of data structures and memory layout? For cache performance you normally want to store data in structure of arrays (SoA) or array of structures (AoS) format. AoS is usually the natural way, and it matches the way the user thinks conceptually, while SoA is usually more efficient for cache reasons (depending on the algorithms and hardware architecture), so often the programmer has to choose a tradeoff between readability and performance.
 
 With this zero-cost abstraction we show how to use either SoA or AoS interchangably, by keeping the "look and feel" of the AoS case. The user can decide which memory layout to use just by flipping a switch.
