@@ -1,3 +1,9 @@
+Did you ever struggle because of data structures and memory layout? For cache performance you normally want to store data in structure of arrays (SoA) or array of structures (AoS) format. AoS is usually the natural way, and it matches the way the user thinks conceptually, while SoA is usually more efficient for cache reasons (depanding on the algorithms and hardware architecture), so often the programmer has to choose a tradeoff between readability and performance.
+
+With this zero-cost abstraction we show how to use either SoA or AoS interchangably, by keeping the "look and feel" of the AoS case. The user can decide which memory layout to use just by flipping a switch.
+
+Also, you might have a code already written in which AoS memory layout is used , and you might think of refactoring it to gain performance. This abstraction allows to keep most of the codebase unchanged, and implement both cases without performance loss. A win-win.
+
 As an example, imagine you have a container of "item"s.
 In C++ an item would look like:
 
