@@ -39,16 +39,16 @@ for(auto& i : vec){
 The goal is to completely redesign the class "item" in such a way that the latter code snippet remains unchanged.
 And we want to do that without paying any const, i.e. building a zero cost abstraction.
 
-This problem is not trivial, and has given headaches to programmers in the last years, forcing them to choosea tradeoff between performance and code readability. Well this time is over, thanks to the magic of modern C++.
+This problem is not trivial, and has given headaches to programmers in the last years, forcing them to choose a tradeoff between performance and code readability. Well this time is over, thanks to the magic of modern C++.
 Let me explain the details by showing how to build the abstraction from scratch.
 
 We create two helper classes which given an item generate the container type as a vector of tuples or a tuple of vectors, depending on a tag template argument. We call this class a DataLayoutPolicy and we are going to use it e.g. in this way:
 ```DataLayoutPolicy<std::vector, SoA, char, double, std::string>```
-to generate a tuple of vectors of char, int and double.
+to generate a tuple of vectors of char, int, and double.
 
 ```C++
 enum class DataLayout { SoA, //structure of arrays
-						AoS //array of structures
+			AoS //array of structures
 };
 template <template <typename...> class Container, DataLayout TDataLayout, typename TItem>
 struct DataLayoutPolicy{};
@@ -74,8 +74,8 @@ struct DataLayoutPolicy<Container, DataLayout::AoS, TItem<Types...>> {
 ```
 ... just forwarding. We do the same for the structure of arrays case. Note: there are a few things to be explained about the code below.
 
-* It wraps all the types in a ```ref_wrap``` type, which is a "decorated" std::reference_wrapper. This is because we want to access the elements as lvalue references,
-  to be able to change their values. using a regular reference we would be in trouble if e.g. ```Types``` contains any reference.
+* It wraps all the types in a ```ref_wrap``` type, which is a "decorated" std::reference_wrapper. This because we want to access the elements as lvalue references,
+  to be able to change their value. using a regular reference we would be in trouble if for instance ```Types``` contains any reference.
   One thing worth noticing is that in the AoS case the DataLayoutPolicy::value_type is a reference, while in the SoA case is the value of a ref_wrap type.
 
 * we return by value a newly created tuple of ref_wrap of the values. This is surpisingly OK, because the compiler is optimizing all
