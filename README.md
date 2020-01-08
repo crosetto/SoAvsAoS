@@ -352,3 +352,5 @@ size of the data members in the item object. On the other hand for the SoA data 
 We see the loop is unrolled and vectorized by Clang (version 6.0.0),
 and the increment for the address is 0x20, independent of
 the number of data members present in the item struct.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3595256.svg)](https://doi.org/10.5281/zenodo.3595256)
