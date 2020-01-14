@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3595256.svg)](https://doi.org/10.5281/zenodo.3595256)
+
 # C++ zero cost abstraction to switch from AoS to SoA
 
 Did you ever struggle because of data structures and memory layout? For cache performance you normally want to store data in structure of arrays (SoA) or array of structures (AoS) format. AoS is usually the natural way, and it matches the way the user thinks conceptually, while SoA is usually more efficient for cache reasons (depending on the algorithms and hardware architecture), so often the programmer has to choose a tradeoff between readability and performance.
@@ -353,4 +355,4 @@ We see the loop is unrolled and vectorized by Clang (version 6.0.0),
 and the increment for the address is 0x20, independent of
 the number of data members present in the item struct.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3595256.svg)](https://doi.org/10.5281/zenodo.3595256)
+
