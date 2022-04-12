@@ -306,7 +306,7 @@ int main( int argc, char** argv )
     }
 }
 ```
-and we can write generic and efficient code regardless of the memory layout underneeth.
+and we can write generic and efficient code regardless of the memory layout underneath.
 What's left to do is to check that this is a zero cost abstraction. The easiest way for me to check that is using a debugger:
 compile the example with symbols on,
 ```
