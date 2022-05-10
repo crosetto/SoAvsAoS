@@ -328,7 +328,7 @@ The instructions being executed inside the loop are in case of AoS data layout
 0x400b0b <main(int, char**)+203>        add    $0xffffffffffffffff,%rcx
 0x400b0f <main(int, char**)+207>        jne    0x400b00 <main(int, char**)+192>
 ```
-Notice in particular that in the second line the offset being add to compute the address is 0x160. This changes depending on the
+Notice in particular that in the second line the offset being add to compute the address is 0x610. This changes depending on the
 size of the data members in the item object. On the other hand for the SoA data structure we have
 ```
 0x400b60 <main(int, char**)+224>        movups %xmm1,(%rdi,%rsi,8)
