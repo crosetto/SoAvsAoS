@@ -42,7 +42,7 @@ for( auto& i : vec ) {
 }
 ```
 The goal is to completely redesign the class "item" in such a way that the latter code snippet remains unchanged.
-And we want to do that without paying any const, i.e. building a zero cost abstraction.
+And we want to do that without paying any cost, i.e. building a zero cost abstraction.
 
 This problem is not trivial, and has given headaches to programmers in the last years, forcing them to choose a tradeoff between performance and code readability. Well this time is over, thanks to the magic of modern C++.
 Let me explain the details by showing how to build the abstraction from scratch.
